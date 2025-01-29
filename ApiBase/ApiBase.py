@@ -32,8 +32,6 @@ class ApiBase:
     #delete method
     def delete(self, endpoint,  headers=None):
         url = f"{self.base_url}{endpoint}"
-        print("url")
-        print(url)
         headers = headers or self.default_headers
         response = requests.delete(url, headers=headers)
         return response

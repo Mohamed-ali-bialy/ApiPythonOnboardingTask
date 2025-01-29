@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (SeleniumWithRobot)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (SeleniumWithRobot)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (ApiPythonOnboardingTask)" project-jdk-type="Python SDK" />
 </project>
