@@ -1,3 +1,4 @@
+
 import pytest
 import random
 from Helpers.SwaggerHelper import SwaggerHelper
@@ -19,19 +20,26 @@ def test_data():
     # random number for creating pet initial data
     random_int = random.randint(100, 1000)
     # another random number for updating per data
-    random_int_2 = random.randint(100, 1000)
+    random_int_updated = random.randint(100, 1000)
     data = {
+        #create data
         "pet_id": None,
         "category_id": random_int,
-        "category_name": f"Cat_Name_{random_int}",
+        "category_name": f"Category_Name_{random_int}",
         "name": f"petName_{random_int}",
         "photo_urls": ["https://example.com/photo1.jpg", "https://example.com/photo2.jpg"],
         "tag_id": random_int,
         "tag_name": f"tagName_{random_int}",
         "status": "available",
         "expected_status_code": 200,
-        "updated_name": f"petName_{random_int_2}",
-        "updated_status": "NotAvailable"
+        #updated data
+        "updated_category_id": random_int_updated,
+        "updated_category_name": f"Category_Name_{random_int_updated}",
+        "updated_name": f"petName_{random_int_updated}",
+        "updated_photo_urls": [f"https://example.com/photo{random_int_updated}.jpg", f"https://example.com/photo2{random_int_updated}.jpg"],
+        "updated_tag_id": random_int_updated,
+        "updated_tag_name": f"tagName_{random_int_updated}",
+        "updated_status": "NotAvailable",
 
     }
     return data
@@ -61,7 +69,7 @@ class TestPet:
 
         #print json
         print("create_response.json()")
-        print(create_response.json())
+        print(create_data)
 
 
         # update pet id in test data to use it in other cases
@@ -84,15 +92,19 @@ class TestPet:
         print("start test")
         """
         Test update a pet using the ID created in `test_create_pet`.
-        pet_id, name, status
+        pet_id, categoryID, category Name,name, tagID, tag Name, status
         """
         # call update pet method
-        update_response = swagger_helper.update_pet_with_post(
+        update_response = swagger_helper.update_pet_with_put(
             pet_id=test_data['pet_id'],
+            category_id=test_data['updated_category_id'],
+            category_name=test_data['updated_category_name'],
             name=test_data['updated_name'],
-            status=test_data['updated_status'],
+            photo_urls=test_data['updated_photo_urls'],
+            tag_id=test_data['updated_tag_id'],
+            tag_name=test_data['updated_tag_name'],
+            status=test_data['updated_status']
         )
-
         # get json of response
         update_pet_data = update_response.json()
 
@@ -100,7 +112,15 @@ class TestPet:
         print("update_response.json()")
         print(update_pet_data)
 
-        #assert on status code
+        # assertion updated data equal to test data
+        assert update_pet_data['id'] == test_data['pet_id'], "Mismatch on Pet ID"
+        assert update_pet_data['category']['id'] == test_data['updated_category_id'], "Mismatch on category ID"
+        assert update_pet_data['category']['name'] == test_data['updated_category_name'], "Mismatch on category NAME"
+        assert update_pet_data['name'] == test_data['updated_name'], "Mismatch on Pet Name"
+        assert update_pet_data['photoUrls'] == test_data['updated_photo_urls'], "Mismatch on PHOTOS URL"
+        assert update_pet_data['tags'][0]['id'] == test_data['updated_tag_id'], "Mismatch on tag ID"
+        assert update_pet_data['tags'][0]['name'] == test_data['updated_tag_name'], "Mismatch on tag name"
+        assert update_pet_data['status'] == test_data['updated_status'], "Mismatch on status"
         assert update_response.status_code == test_data['expected_status_code'], "Mismatch on status Code"
 
     # add ordering for execution test cases
@@ -124,12 +144,12 @@ class TestPet:
 
         # assert pet data is updated correctly
         assert get_data['id'] == test_data['pet_id'], "Mismatch on Pet Id On Get Method"
-        assert get_data['category']['id'] == test_data['category_id'], "Mismatch on category ID"
-        assert get_data['category']['name'] == test_data['category_name'], "Mismatch on category NAME"
+        assert get_data['category']['id'] == test_data['updated_category_id'], "Mismatch on category ID"
+        assert get_data['category']['name'] == test_data['updated_category_name'], "Mismatch on category NAME"
         assert get_data['name'] == test_data['updated_name'], "Mismatch on updating Pet Name"
-        assert get_data['photoUrls'] == test_data['photo_urls'], "Mismatch on PHOTOS URL"
-        assert get_data['tags'][0]['id'] == test_data['tag_id'], "Mismatch on tag ID"
-        assert get_data['tags'][0]['name'] == test_data['tag_name'], "Mismatch on tag name"
+        assert get_data['photoUrls'] == test_data['updated_photo_urls'], "Mismatch on PHOTOS URL"
+        assert get_data['tags'][0]['id'] == test_data['updated_tag_id'], "Mismatch on tag ID"
+        assert get_data['tags'][0]['name'] == test_data['updated_tag_name'], "Mismatch on tag name"
         assert get_data['status'] == test_data['updated_status'], "Mismatch on UPDATING status"
         assert get_response.status_code == test_data['expected_status_code'], "Mismatch on status Code"
 
