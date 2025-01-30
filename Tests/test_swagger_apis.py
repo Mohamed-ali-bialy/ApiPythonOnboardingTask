@@ -1,9 +1,9 @@
-
 import pytest
 import random
 from Helpers.SwaggerHelper import SwaggerHelper
 
-#make fixture scope of class
+
+# make fixture scope of class
 @pytest.fixture(scope="class")
 def swagger_helper():
     """
@@ -11,7 +11,8 @@ def swagger_helper():
     """
     return SwaggerHelper()
 
-#make fixture scope of class
+
+# make fixture scope of class
 @pytest.fixture(scope="class")
 def test_data():
     """
@@ -22,7 +23,7 @@ def test_data():
     # another random number for updating per data
     random_int_updated = random.randint(100, 1000)
     data = {
-        #create data
+        # create data
         "pet_id": None,
         "category_id": random_int,
         "category_name": f"Category_Name_{random_int}",
@@ -32,11 +33,12 @@ def test_data():
         "tag_name": f"tagName_{random_int}",
         "status": "available",
         "expected_status_code": 200,
-        #updated data
+        # updated data
         "updated_category_id": random_int_updated,
         "updated_category_name": f"Category_Name_{random_int_updated}",
         "updated_name": f"petName_{random_int_updated}",
-        "updated_photo_urls": [f"https://example.com/photo{random_int_updated}.jpg", f"https://example.com/photo2{random_int_updated}.jpg"],
+        "updated_photo_urls": [f"https://example.com/photo{random_int_updated}.jpg",
+                               f"https://example.com/photo2{random_int_updated}.jpg"],
         "updated_tag_id": random_int_updated,
         "updated_tag_name": f"tagName_{random_int_updated}",
         "updated_status": "NotAvailable",
@@ -44,11 +46,12 @@ def test_data():
     }
     return data
 
+
 # create test class and add needed fixtures
 @pytest.mark.usefixtures("swagger_helper", "test_data")
 class TestPet:
 
-    #add ordering for execution test cases
+    # add ordering for execution test cases
     @pytest.mark.order1
     def test_create_pet(self, swagger_helper, test_data):
         """
@@ -67,14 +70,12 @@ class TestPet:
         # get json of response
         create_data = create_response.json()
 
-        #print json
+        # print json
         print("create_response.json()")
         print(create_data)
 
-
         # update pet id in test data to use it in other cases
         test_data['pet_id'] = create_data['id']
-
 
         # assertion created equal to test data
         assert create_data['category']['id'] == test_data['category_id'], "Mismatch on category ID"
@@ -160,13 +161,13 @@ class TestPet:
         Test deleting the pet and ensuring it can no longer be retrieved.
         """
 
-        #call delete pet
+        # call delete pet
         delete_response = swagger_helper.delete_pet(test_data['pet_id'])
 
         # get json of response
         delete_data = delete_response.json()
 
-        #print json response
+        # print json response
         print("delete")
         print(delete_data)
 
@@ -179,9 +180,9 @@ class TestPet:
         # get json of response
         verify_response_data = verify_response.json()
 
-        #print json response
+        # print json response
         print("verify_response.json()")
         print(verify_response_data)
 
-        #assert on status code is 404
+        # assert on status code is 404
         assert verify_response.status_code == 404
