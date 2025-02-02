@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["pytest", "test_swagger_apis.py"]
+CMD ["pytest", "Tests/test_swagger_apis.py"]
